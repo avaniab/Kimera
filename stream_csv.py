@@ -11,10 +11,14 @@ class CsvPublisherNode:
     def __init__(self):
         self.pub = rospy.Publisher('/tf', TFMessage, queue_size=10)
         self.new_list = self.load_data('/home/avaniab/Euroc/output_logs/traj_vio.csv')
+        self.rate=rospy.Rate(1)
 
         for row in self.new_list:
             print(row)
-        self.publish_csv_data()
+            
+        while not rospy.is_shutdown():
+            self.publish_csv_data()
+            r.sleep()
 
     #get csv data in script and print it
     def load_data(self, filename):
@@ -54,9 +58,8 @@ class CsvPublisherNode:
     def publish_csv_data(self):
         #rospy.init_node('csv_publisher', anonymous=True)
         #pub = rospy.Publisher(topic_name, TFMessage, queue_size=10)
-
-        data_list = self.load_data('/home/avaniab/Euroc/output_logs/traj_vio.csv')
-        rate = rospy.Rate(1) 
+        
+        #rate = rospy.Rate(1) 
 
         while not rospy.is_shutdown():
             transforms = []
@@ -68,9 +71,8 @@ class CsvPublisherNode:
                 transform.child_frame_id = 'base_link'
                 transform.child_frame_id = 'odom'
 
-                
-                
                 transforms.append(transform)
+                
 
 
             # tf.transformations.append(transform)
@@ -79,11 +81,11 @@ class CsvPublisherNode:
             #rate.sleep()  # Sleep to maintain the desired rate
 
             # Wrap transforms in a TFMessage
+            rospy.logwarn("Num Transforms: " + str(len(transforms)))
             tf_message = TFMessage(transforms)
             self.pub.publish(tf_message)
-            
             rospy.loginfo("Published transforms")
-            rate.sleep()  # Sleep to maintain the desired rate
+            
 
 if __name__ == '__main__':
     rospy.init_node('csv_publisher')
