@@ -4,7 +4,6 @@ from tf2_msgs.msg import TFMessage
 from geometry_msgs.msg import TransformStamped
 # import tf.transformations
 import csv
-import numpy as np
 
 class CsvPublisherNode:
 
@@ -38,7 +37,7 @@ class CsvPublisherNode:
         transform = TransformStamped()
 
         # Convert timestamp from row to rospy.Time
-        timestamp = np.float64(row['#timestamp'])
+        timestamp = float(row['#timestamp'])
 
         transform.header.stamp = rospy.Time.from_sec(timestamp)
 
